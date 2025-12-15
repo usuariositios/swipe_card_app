@@ -1,0 +1,52 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:swipe_card_app/controllers/menuGameController.dart';
+import 'package:swipe_card_app/screens/tarjetasScreen.dart';
+
+import 'package:swipe_card_app/screens/menuScreen.dart';
+import 'package:swipe_card_app/screens/categoriasScreen.dart';
+import 'package:swipe_card_app/screens/jugadoresScreen.dart';
+import 'package:swipe_card_app/util/AppTranslations';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppTranslations.load();//cargar traducciones antes de correr la app
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive); // pantalla completa
+
+   if (!kIsWeb) {
+    await MobileAds.instance.initialize(); // AdMob
+   }
+  runApp(MyApp());//para que tenga un context);
+}
+
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
+  final mController = Get.put(MenuGameController(),permanent: true);
+  
+  @override
+  Widget build(BuildContext context) {
+    return Obx(()=>
+    GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/',
+        getPages: [
+            GetPage(name: '/', page: () => MenuScreen()),            
+            GetPage(name: '/categorias_screen', page: () => CategoriasScreen()), // tu pantalla del juego      
+            GetPage(name: '/jugadores_screen', page: () => JugadoresScreen()), // tu pantalla del juego
+            GetPage(name: '/tarjetas_screen', page: () => TarjetasScreen()), // tu pantalla del juego
+          ],
+            translations: AppTranslations(),
+            locale: Get.deviceLocale,//idioma inicial
+            fallbackLocale: Locale('en','US'),
+            title: 'Juego de retos',
+            theme: ThemeData.light(),   // Tema claro
+            darkTheme: ThemeData.dark(),// Tema oscuro
+            home: MenuScreen(),
+            themeMode: mController.themeMode.value, // Se controla con GetX
+      )
+  );
+  }
+}

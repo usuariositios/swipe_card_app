@@ -1,0 +1,153 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+
+class JugadoresController extends GetxController {
+  var idioma = 'es'.obs; // 'es' o 'en'
+  //var locale = const Locale('en', 'US').obs;
+  var locale = Get.deviceLocale ?? const Locale('en', 'US');
+
+  var nombreJugador = ''.obs;
+  Rx<int> numJugadores = 2.obs;
+  List<String> jugadoresList=[//nombres de jugadores   
+  ];//lista de jugadores
+  RxList inputsList = <TextEditingController>[].obs;
+  Rx<int> numTabla = 0.obs;
+  var themeMode = ThemeMode.light.obs;
+  
+  @override
+  void onInit() {
+    super.onInit();
+    
+    print('entro oninit MenuGameController');//ingresa una sola vez
+    var locale = Get.deviceLocale;
+    print(locale!.languageCode);
+    idioma.value = locale!.languageCode;
+    //cargarInputs();//inputs de los nombres de jugadores
+    
+  }
+
+   void agregarJugador() {
+    inputsList.add(TextEditingController());
+  }
+
+  void eliminarJugador(int index) {
+    inputsList[index].dispose(); // LIBERA MEMORIA
+    inputsList.removeAt(index);
+  }
+  
+  void cargarJugadores(){
+    inputsList.value=<TextEditingController>[];
+    // Ejemplo: inicializamos con 3 inputs vacíos
+    /*for (int i = 0; i < jugadoresList.length; i++) {
+      TextEditingController t = TextEditingController();
+      t.text = jugadoresList[i];
+      inputsList.add(t);
+    }*/
+
+  }
+
+ 
+  /*void cargarJugadores(){
+    jugadoresList=[//nombres de jugadores
+    '${'jugador'.tr} 1',
+    '${'jugador'.tr} 2',
+    '${'jugador'.tr} 3',
+    '${'jugador'.tr} 4'
+  ];//lista de jugadores
+
+  }*/
+
+  List<(int,String)> opcionesList = [
+      ( 2,'2 Jugadores'),
+      ( 3,'3 Jugadores'),
+      ( 4,'4 Jugadores'),
+    ];
+
+  @override
+  void onClose() {
+    print("entro onclose");
+    for (var c in inputsList) {
+      c.dispose();
+    }
+    super.onClose();
+  }
+  
+
+  void cambiarIdioma_action(String nuevo) {
+    idioma.value = nuevo;
+  }
+
+  void irmenu_action() {
+       
+    
+    Get.toNamed('/', arguments: {//a la pantalla inicial      
+                });
+  }
+
+
+  
+
+  void irboardscreen_action() {        
+    
+    print('jugadores a enviar $numJugadores');
+    print('numTabla a enviar ${numTabla.value}' );
+    Get.toNamed('/board_screen', arguments: {
+      'numJugadores': numJugadores.value,
+      'nombresList': jugadoresList,
+      'numTabla':numTabla.value,
+      'idioma':idioma.value
+    });
+  }
+
+  void irCategoriasScreen_action() {
+    
+    Get.toNamed('/categorias_screen', arguments: {//enviar parametros al screen
+    });
+  }
+
+  void irnombresscreen_action() {
+    
+    Get.toNamed('/nombres_screen', arguments: {      
+    });
+  }
+
+  /*void guardarNombres_action(){
+    jugadoresList =  inputsList.map((c) => c.text).toList();//se actualiza la lista de nombres
+    /*for(int i = 0;i<jugadoresList.length;i++){
+      print(jugadoresList[i]);
+    }*/
+    Get.toNamed('/', arguments: {//a la pantalla inicial      
+    });
+  }*/
+
+  void cambiarIdioma() {//cambia idioma
+    switch (idioma.value) {
+      case 'es':
+        idioma.value = 'en';
+        Get.updateLocale(Locale('en', 'US'));
+        break;
+      case 'en':
+        idioma.value = 'es';
+        Get.updateLocale(Locale('es', 'ES'));
+        break;
+      default:
+    }    
+  }
+
+  void toggleTheme() {//cambia tema
+    if (themeMode.value == ThemeMode.light)
+      {
+        themeMode.value =  ThemeMode.dark; 
+      }
+    else{
+      themeMode.value = ThemeMode.light;
+      }
+    Get.changeThemeMode(themeMode.value);
+  }
+  
+  
+
+  
+
+}
