@@ -4,17 +4,23 @@ import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:swipe_card_app/model/preguntas.dart';
 import 'package:swipe_card_app/service/Servicios.dart';
 import 'package:swipe_card_app/widgets/opcionesDialog.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 
 class CardGameController extends GetxController {
   final swiperController = AppinioSwiperController();
 
   final cards = <String>[
-    "Cuenta una experiencia graciosa que te sucedio en la escuela",
+    //"Cuenta una experiencia graciosa que te sucedio en la escuela",
   ].obs;
   late List<Preguntas>? preguntasList;
   int iPregunta=0;
   Rx<String> idioma = "es".obs;
+  List<String> jugadoresList=[];//lista de jugadores
+  int actJugador = 0;
+
+  Rx<BannerAd?> bannerAd = Rx<BannerAd?>(null);//banner admob
+  RxBool isLoaded = false.obs;//banner
   
   @override
   void onInit() async {
@@ -35,6 +41,13 @@ class CardGameController extends GetxController {
       iPregunta++;
       cards.add(preguntasList![iPregunta].pregunta!);
       print(preguntasList![iPregunta].pregunta);
+    }
+    if(actJugador<jugadoresList.length){
+       actJugador++;
+       //print(jugadoresList[actJugador]);
+       if(actJugador>=jugadoresList.length){
+          actJugador=0;    
+       }
     }
     
     
@@ -75,10 +88,36 @@ class CardGameController extends GetxController {
     }
   Future <void> cargarPreguntas(String idioma) async{
     preguntasList = await Servicios.cargarPreguntas("assets/data/preguntas_$idioma.json");
-    preguntasList!.shuffle();//desordena la lista    
+    preguntasList!.shuffle();//desordena la lista
+        
+    iPregunta++;//para colocar la primera pregunta
+    cards.add(preguntasList![iPregunta].pregunta!);
   }
+
 
   void undoSwipe() {
     swiperController.unswipe();
+  }
+
+  void loadBanner() {
+    bannerAd = Rx<BannerAd?>(null);//era esta variable reiniciarla desde la interfaz
+    final ad = BannerAd(
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111', // id de la publicidad
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {          
+          bannerAd.value = ad as BannerAd;
+          isLoaded.value = true;
+
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isLoaded.value = false;
+          print('Error al cargar el banner: ${error.message}');
+        },
+      ),
+    );
+    ad.load();
   }
 }

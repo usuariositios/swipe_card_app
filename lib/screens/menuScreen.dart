@@ -32,7 +32,17 @@ class _MenuScreenState extends State<MenuScreen> {
     final screenAnc = MediaQuery.of(context).size.width;
     final screenAlt = MediaQuery.of(context).size.height;
 
-    mController.cargarJugadores();//nombres de jugadores
+    //mController.cargarJugadores();//nombres de jugadores
+    try {
+      
+      final args = Get.arguments as Map<String, dynamic>;
+      if((args['jugadoresList'] as List).isNotEmpty)
+        {
+          mController.jugadoresList = args['jugadoresList']; //entrega de variables enviadas el widget y guardar al controlador    
+        }
+    } catch (e) {//puede llegar nulo al screen      
+      e.printError();
+    }
   
 
     return Scaffold(

@@ -10,10 +10,7 @@ class MenuGameController extends GetxController {
   var nombreJugador = ''.obs;
   Rx<int> numJugadores = 2.obs;
   List<String> jugadoresList=[//nombres de jugadores
-    '${'jugador'.tr} 1',
-    '${'jugador'.tr} 2',
-    '${'jugador'.tr} 3',
-    '${'jugador'.tr} 4'
+    
   ];//lista de jugadores
   var inputsList = <TextEditingController>[];
   Rx<int> numTabla = 0.obs;
@@ -81,7 +78,8 @@ class MenuGameController extends GetxController {
   void irTarjetasScreen_action() {
     
     Get.toNamed('/tarjetas_screen', arguments: {//enviar parametros al screen
-    'idioma':idioma.value
+    'idioma':idioma.value,
+    'jugadoresList':jugadoresList
     });
   }
 

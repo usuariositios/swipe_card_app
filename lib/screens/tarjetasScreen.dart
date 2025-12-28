@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:swipe_card_app/controllers/tarjetasController.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class TarjetasScreen extends StatelessWidget {
   final CardGameController cController = Get.put(CardGameController());
@@ -17,12 +18,23 @@ class TarjetasScreen extends StatelessWidget {
     
     cController.idioma.value = args['idioma']; //entrega de variables enviadas el widget y guardar al controlador
     cController.cargarPreguntas(cController.idioma.value);
+    cController.actJugador = 0;//se actualiza con obx de getx
     
     } catch (e) {//puede llegar nulo al screen
       e.printError();
       cController.idioma.value='en';
       cController.cargarPreguntas(cController.idioma.value);
     }
+
+    try {
+      cController.jugadoresList=[];
+      final args = Get.arguments as Map<String, dynamic>;
+      cController.jugadoresList = args['jugadoresList']; //entrega de variables enviadas el widget y guardar al controlador    
+    } catch (e) {//puede llegar nulo al screen
+      e.printError();
+    }
+
+    cController.loadBanner();
 
     
 
@@ -92,6 +104,10 @@ class TarjetasScreen extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                             ),
+                            cController.jugadoresList.length>0?
+                            Text(cController.jugadoresList[cController.actJugador],
+                            style: TextStyle(fontSize: 15)):
+                            Text('')
                               ],
                             )
                             
@@ -117,6 +133,23 @@ class TarjetasScreen extends StatelessWidget {
             })
             )
           ),
+
+          Positioned(
+            top: 0,
+            child: 
+             Obx(() =>
+             
+              !cController.isLoaded.value || cController.bannerAd.value == null
+                ? SizedBox(height: screenAlt*0.14)
+                :Container(
+                alignment: Alignment.center,
+                width: screenAnc , //boardController.bannerAd.value!.size.width.toDouble()
+                height: cController.bannerAd.value!.size.height.toDouble(),
+                child: AdWidget(ad: cController.bannerAd.value!),
+                )
+
+          ),
+          )
 
           ]
       )

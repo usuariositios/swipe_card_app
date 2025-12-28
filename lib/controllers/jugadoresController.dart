@@ -11,9 +11,10 @@ class JugadoresController extends GetxController {
   Rx<int> numJugadores = 2.obs;
   List<String> jugadoresList=[//nombres de jugadores   
   ];//lista de jugadores
-  RxList inputsList = <TextEditingController>[].obs;
+  RxList<TextEditingController> inputsList = <TextEditingController>[].obs;
   Rx<int> numTabla = 0.obs;
   var themeMode = ThemeMode.light.obs;
+  
   
   @override
   void onInit() {
@@ -79,9 +80,14 @@ class JugadoresController extends GetxController {
   }
 
   void irmenu_action() {
+    jugadoresList =[];
+    for(int i = 0;i<inputsList.length;i++){//obtener los nombres de los inputs
+      jugadoresList.add(inputsList[i].text);
+    }
        
     
-    Get.toNamed('/', arguments: {//a la pantalla inicial      
+    Get.toNamed('/', arguments: {//a la pantalla inicial
+                     'jugadoresList': jugadoresList, 
                 });
   }
 
